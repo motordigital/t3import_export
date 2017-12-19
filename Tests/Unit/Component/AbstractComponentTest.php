@@ -1,9 +1,10 @@
 <?php
+
 namespace CPSIT\T3importExport\Tests\Unit\Component;
 
 use CPSIT\T3importExport\Component\AbstractComponent;
+use CPSIT\T3importExport\Domain\Model\TaskResult;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
-use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Extbase\SignalSlot\Dispatcher;
 
 /***************************************************************
@@ -107,25 +108,50 @@ class AbstractComponentTest extends UnitTestCase
 
         $this->assertSame(
             $expectedResult,
-            $this->subject->isDisabled($configuration, [])
+            $this->subject->isDisabled($configuration, [], null)
         );
+    }
+
+    public function isDisabledReturnsTrueIfResultContainsMessageWithMatchingIdDataProvider()
+    {
+        return [
+            'single message id' => [
+                [
+                    'disable' => [
+                        'if' => [
+                            'result' => [
+                                'hasMessage' => '12345'
+                            ]
+                        ]
+                    ]
+                ],
+            ],
+            'multiple message ids' => [
+                [
+                    'disable' => [
+                        'if' => [
+                            'result' => [
+                                'hasMessage' => '12345,2,7'
+                            ]
+                        ]
+                    ]
+                ],
+            ],
+        ];
     }
 
     /**
      * @test
+     * @param $configuration
+     * @dataProvider isDisabledReturnsTrueIfResultContainsMessageWithMatchingIdDataProvider
      */
-    public function objectManagerCanBeInjected()
+    public function isDisabledReturnsTrueIfResultContainsMessageWithMatchingId($configuration)
     {
-        $mockObjectManager = $this->getMock(
-            ObjectManager::class
-        );
-
-        $this->subject->injectObjectManager($mockObjectManager);
-
-        $this->assertAttributeSame(
-            $mockObjectManager,
-            'objectManager',
-            $this->subject
-        );
+        $result = $this->getMockBuilder(TaskResult::class)
+            ->setMethods(['hasMessageWithId'])
+            ->getMock();
+        $result->expects($this->once())->method('hasMessageWithId')
+            ->willReturn(true);
+        $this->subject->isDisabled($configuration, null, $result);
     }
 }

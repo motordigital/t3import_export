@@ -1,12 +1,11 @@
 <?php
 namespace CPSIT\T3importExport\Tests;
 
-use CPSIT\T3importExport\ResourceTrait;
+use CPSIT\T3importExport\Resource\ResourceTrait;
 use CPSIT\T3importExport\Validation\Configuration\ResourcePathConfigurationValidator;
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
 use TYPO3\CMS\Core\Tests\UnitTestCase;
-
 
 /***************************************************************
  *
@@ -36,7 +35,7 @@ class ResourceTraitTest extends UnitTestCase
 {
 
     /**
-     * @var ResourceTrait
+     * @var \CPSIT\T3importExport\Resource\ResourceTrait
      */
     protected $subject;
 
@@ -46,7 +45,6 @@ class ResourceTraitTest extends UnitTestCase
             ResourceTrait::class, [], '', false, true, true, ['dummy', 'getAbsoluteFilePath']
         );
         vfsStreamWrapper::register();
-
     }
 
     /**
